@@ -1,0 +1,39 @@
+{
+  "utilityProvider": "Municipal Smart Grid Electric Authority",
+  "currency": "USD",
+  "tariffStructure": "Time-Of-Use (TOU) Industrial & Commercial Chilling Rate",
+  "tiers": [
+    {
+      "tierName": "OFF_PEAK_NIGHT",
+      "startHour": 23,
+      "endHour": 7,
+      "ratePerKwh": 0.045,
+      "demandChargePerKw": 0.0,
+      "recommendation": "Full thermal storage charging mode (run chillers to make ice)"
+    },
+    {
+      "tierName": "MID_PEAK_MORNING",
+      "startHour": 7,
+      "endHour": 12,
+      "ratePerKwh": 0.115,
+      "demandChargePerKw": 8.50,
+      "recommendation": "Run high-efficiency chillers at optimal COP for baseline cooling"
+    },
+    {
+      "tierName": "ON_PEAK_AFTERNOON",
+      "startHour": 12,
+      "endHour": 18,
+      "ratePerKwh": 0.285,
+      "demandChargePerKw": 24.00,
+      "recommendation": "Discharge ice thermal storage (melt ice) to shave expensive peak kW"
+    },
+    {
+      "tierName": "MID_PEAK_EVENING",
+      "startHour": 18,
+      "endHour": 23,
+      "ratePerKwh": 0.120,
+      "demandChargePerKw": 8.50,
+      "recommendation": "Transition back to direct chiller cooling as ambient cools"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "sensorCode": "TE-CHW-SUP-01",
+    "sensorType": "TEMPERATURE",
+    "readingValue": 5.2,
+    "unit": "°C",
+    "location": "Central Chilled Water Primary Supply Header"
+  },
+  {
+    "sensorCode": "TE-CHW-RET-01",
+    "sensorType": "TEMPERATURE",
+    "readingValue": 13.6,
+    "unit": "°C",
+    "location": "District Return Chilled Water Header"
+  },
+  {
+    "sensorCode": "FE-CHW-TOT-01",
+    "sensorType": "FLOW_METER",
+    "readingValue": 2817.0,
+    "unit": "m3/h",
+    "location": "Main Underground Cooling Ring Distribution"
+  },
+  {
+    "sensorCode": "PE-CHW-DIFF-01",
+    "sensorType": "PRESSURE",
+    "readingValue": 220.5,
+    "unit": "kPa",
+    "location": "Hydraulic Differential Pressure Bypass"
+  },
+  {
+    "sensorCode": "TE-GLY-SUP-01",
+    "sensorType": "TEMPERATURE",
+    "readingValue": -3.9,
+    "unit": "°C",
+    "location": "Ice Storage Glycol Freezing Loop Supply"
+  },
+  {
+    "sensorCode": "TE-GLY-RET-01",
+    "sensorType": "TEMPERATURE",
+    "readingValue": -1.3,
+    "unit": "°C",
+    "location": "Ice Storage Glycol Loop Return"
+  },
+  {
+    "sensorCode": "PWR-PLANT-TOT",
+    "sensorType": "POWER_METER",
+    "readingValue": 3891.5,
+    "unit": "kW",
+    "location": "Municipal Plant 11kV Substation Feed"
+  },
+  {
+    "sensorCode": "ICE-THICK-TK01",
+    "sensorType": "ICE_LEVEL",
+    "readingValue": 85.0,
+    "unit": "%",
+    "location": "Tank 01 Ultrasonic Ice Inventory Gauge"
+  }
+]

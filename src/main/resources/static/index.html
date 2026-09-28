@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Municipal District Cooling & ITES System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Utility Header -->
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+            <div>
+                <h1>Smart Municipal District Cooling & ITES</h1>
+                <p class="subtitle">Central Utility Plant SCADA & Ice Thermal Energy Storage Optimization</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator" id="connStatus">
+                <span class="pulse-dot"></span>
+                <span id="connText">Connected to Spring Boot API</span>
+            </div>
+            <div class="time-widget" id="clockWidget">--:--:--</div>
+            <button class="btn btn-secondary btn-sm" id="btnRefresh" title="Refresh all live data">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Sync
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-bar">
+        <button class="nav-btn active" data-tab="tab-overview">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+            SCADA Overview
+        </button>
+        <button class="nav-btn" data-tab="tab-zones">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Municipal Zones
+        </button>
+        <button class="nav-btn" data-tab="tab-ites">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+            Ice Storage (ITES)
+        </button>
+        <button class="nav-btn" data-tab="tab-chillers">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M4.93 19.07l4.24-4.24"/></svg>
+            Chiller Plant
+        </button>
+        <button class="nav-btn" data-tab="tab-dispatch">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Smart Dispatch & Tariffs
+        </button>
+        <button class="nav-btn" data-tab="tab-telemetry">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            IoT Telemetry & Alerts
+            <span class="badge badge-alert" id="alertCountBadge">1</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-billing">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Billing & Carbon Offset
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- ======================= TAB 1: SCADA OVERVIEW ======================= -->
+        <section id="tab-overview" class="tab-pane active">
+            <!-- Top Metric Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Total Municipal Cooling Demand</span>
+                        <span class="kpi-tag primary">Load</span>
+                    </div>
+                    <div class="kpi-value" id="kpiDemandTR">7,350 <span class="unit">TR</span></div>
+                    <div class="kpi-sub" id="kpiDemandKW">25,848 kW Thermal Equivalent</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Central Chiller Electrical Power</span>
+                        <span class="kpi-tag success">Plant</span>
+                    </div>
+                    <div class="kpi-value" id="kpiPowerKW">3,815 <span class="unit">kW</span></div>
+                    <div class="kpi-sub" id="kpiPlantCOP">Average Plant COP: 5.61</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Ice Storage Inventory (ITES)</span>
+                        <span class="kpi-tag ice">Storage</span>
+                    </div>
+                    <div class="kpi-value" id="kpiIceInv">24,120 <span class="unit">TR-hr</span></div>
+                    <div class="kpi-sub" id="kpiAvgSOC">Average State of Charge: 86.1%</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Active Grid Tariff Rate</span>
+                        <span class="kpi-tag warning" id="kpiTariffTier">ON_PEAK</span>
+                    </div>
+                    <div class="kpi-value" id="kpiTariffRate">$0.285 <span class="unit">/kWh</span></div>
+                    <div class="kpi-sub" id="kpiHourlySavings">Active Savings: +$503.63/hr</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Carbon Avoidance (CO2)</span>
+                        <span class="kpi-tag eco">Eco</span>
+                    </div>
+                    <div class="kpi-value" id="kpiCarbonOffset">1,482 <span class="unit">Tons</span></div>
+                    <div class="kpi-sub">Peak Shaved: 2.85 MW Electric</div>
+                </div>
+            </div>
+
+            <!-- Plant Flow Schematic & Mode Control -->
+            <div class="card plant-schematic-card">
+                <div class="card-header">
+                    <div>
+                        <h2>District Cooling & ITES Plant Architecture</h2>
+                        <p class="card-desc">Interactive hydraulic circuit and thermal dispatch flow</p>
+                    </div>
+                    <div class="mode-badge-wrap">
+                        <span class="label">Operating Mode:</span>
+                        <span class="mode-pill" id="plantCurrentMode">PEAK_SHAVING_DISCHARGE</span>
+                    </div>
+                </div>
+
+                <div class="schematic-container">
+                    <!-- Zone 1: Central Chillers -->
+                    <div class="schematic-node chiller-station">
+                        <div class="node-title">
+                            <span class="node-icon">❄️</span>
+                            Chiller Station (CUP)
+                        </div>
+                        <div class="node-details">
+                            <p><strong>Capacity:</strong> 10,000 TR</p>
+                            <p><strong>Running:</strong> 3 Units Active</p>
+                            <p><strong>Output:</strong> 4,500 TR</p>
+                            <p><strong>Supply Temp:</strong> 5.0 °C</p>
+                        </div>
+                        <div class="node-badge status-active">Online</div>
+                    </div>
+
+                    <!-- Pipeline Arrow 1 -->
+                    <div class="pipeline pipeline-left">
+                        <div class="pipe-flow"></div>
+                        <span class="pipe-label">Primary Chilled Water (5.0°C)</span>
+                    </div>
+
+                    <!-- Zone 2: ITES Tank Farm -->
+                    <div class="schematic-node ites-station">
+                        <div class="node-title">
+                            <span class="node-icon">🧊</span>
+                            ITES Ice Banks
+                        </div>
+                        <div class="node-details">
+                            <p><strong>Total Bank:</strong> 28,000 TR-hr</p>
+                            <p><strong>Current SOC:</strong> 86%</p>
+                            <p><strong>Melt Discharge:</strong> 2,850 TR</p>
+                            <p><strong>Glycol Return:</strong> 3.8 °C</p>
+                        </div>
+                        <div class="node-badge status-cooling">Discharging (Melt)</div>
+                    </div>
+
+                    <!-- Pipeline Arrow 2 -->
+                    <div class="pipeline pipeline-right">
+                        <div class="pipe-flow"></div>
+                        <span class="pipe-label">Municipal Supply Ring (5.2°C)</span>
+                    </div>
+
+                    <!-- Zone 3: Municipal District -->
+                    <div class="schematic-node district-station">
+                        <div class="node-title">
+                            <span class="node-icon">🏢</span>
+                            Municipal Network
+                        </div>
+                        <div class="node-details">
+                            <p><strong>Connected Zones:</strong> 5 Zones</p>
+                            <p><strong>Substations:</strong> 6 ETS Units</p>
+                            <p><strong>District Load:</strong> 7,350 TR</p>
+                            <p><strong>Avg Return:</strong> 13.5 °C</p>
+                        </div>
+                        <div class="node-badge status-demand">Satisfied (100%)</div>
+                    </div>
+                </div>
+
+                <!-- Live Dispatch Action Bar -->
+                <div class="schematic-actions">
+                    <button class="btn btn-primary" id="btnRunOptimizer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Execute Smart Dispatch Optimization
+                    </button>
+                    <button class="btn btn-outline" id="btnChargeMode">
+                        ❄️ Force Off-Peak Ice Freezing Mode
+                    </button>
+                    <button class="btn btn-outline" id="btnDischargeMode">
+                        🧊 Force Peak-Shaving Ice Melt Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- 24-Hour Load & Dispatch Chart -->
+            <div class="chart-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>24-Hour Municipal Load & Peak-Shaving Dispatch</h3>
+                            <p class="card-desc">Shows how ice thermal storage discharges during afternoon peak to shave grid power</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="dispatchChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Ice Storage (ITES) State of Charge by Tank</h3>
+                            <p class="card-desc">Real-time inventory and thermal battery levels</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="storageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= TAB 2: MUNICIPAL ZONES ======================= -->
+        <section id="tab-zones" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>Municipal District Zones & Energy Transfer Stations (ETS)</h2>
+                    <p class="card-desc">Monitor and adjust real-time cooling loads for municipal consumer sectors</p>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btnOpenAddZone">
+                    + Add Municipal Zone
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table" id="zonesTable">
+                        <thead>
+                            <tr>
+                                <th>Zone ID</th>
+                                <th>Municipal Facility Name</th>
+                                <th>Sector Type</th>
+                                <th>Current Demand (TR)</th>
+                                <th>Peak Demand (TR)</th>
+                                <th>Supply Temp (°C)</th>
+                                <th>Return Temp (°C)</th>
+                                <th>Delta-T (°C)</th>
+                                <th>Flow Rate (m³/h)</th>
+                                <th>Adjust Load</th>
+                            </tr>
+                        </thead>
+                        <tbody id="zonesTableBody">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Substations (ETS) -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Energy Transfer Stations (ETS Substations)</h3>
+                    <p class="card-desc">Plate-and-frame heat exchangers isolating municipal building secondary loops</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Substation Code</th>
+                                <th>Assigned Municipal Zone</th>
+                                <th>Heat Exchanger Rating (kW)</th>
+                                <th>Valve Opening (%)</th>
+                                <th>Differential Pressure (kPa)</th>
+                                <th>Substation Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="substationsTableBody">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= TAB 3: ITES ICE STORAGE ======================= -->
+        <section id="tab-ites" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>Ice Thermal Energy Storage (ITES) Subsystem</h2>
+                    <p class="card-desc">Latent heat phase-change energy storage for peak power reduction and load shifting</p>
+                </div>
+            </div>
+
+            <!-- Interactive Visual Tanks Grid -->
+            <div class="tanks-grid" id="tanksContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Thermodynamic & Technical Properties of Ice Storage</h3>
+                </div>
+                <div class="physics-grid">
+                    <div class="physics-box">
+                        <span class="label">Latent Heat of Fusion</span>
+                        <div class="value">334 kJ/kg</div>
+                        <p class="desc">Water-to-ice phase change latent energy density (92.8 kWh per metric tonne).</p>
+                    </div>
+                    <div class="physics-box">
+                        <span class="label">Refrigeration Conversion</span>
+                        <div class="value">1 TR = 3.517 kW</div>
+                        <p class="desc">1 Ton-Hour (TR-hr) = 12,000 BTU = 3.517 kWh of thermal cooling energy.</p>
+                    </div>
+                    <div class="physics-box">
+                        <span class="label">Off-Peak Freezing Loop</span>
+                        <div class="value">-4.0 °C to -6.0 °C</div>
+                        <p class="desc">Dual-mode glycol chillers circulate sub-zero brine through internal coils.</p>
+                    </div>
+                    <div class="physics-box">
+                        <span class="label">Peak Melt Discharge Loop</span>
+                        <div class="value">0.0 °C Steady Melt</div>
+                        <p class="desc">Absorbs district return heat with virtually zero compressor electrical work.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= TAB 4: CHILLER PLANT ======================= -->
+        <section id="tab-chillers" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>Central Chilling Plant (CUP) Units</h2>
+                    <p class="card-desc">Centrifugal water-cooled and dual-mode glycol chillers with dynamic COP staging</p>
+                </div>
+            </div>
+
+            <div class="chiller-cards-grid" id="chillersContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- ======================= TAB 5: SMART DISPATCH & TARIFFS ======================= -->
+        <section id="tab-dispatch" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>Smart Grid Optimization & Time-of-Use (TOU) Tariffs</h2>
+                    <p class="card-desc">Automated dynamic dispatch algorithm optimizing chiller and ice storage power split</p>
+                </div>
+                <button class="btn btn-primary" id="btnExecuteDispatchTab">
+                    Run Optimization Dispatch
+                </button>
+            </div>
+
+            <div class="two-col-grid">
+                <!-- Active Tariff Schedule -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Municipal Electricity Tariff Structure (TOU)</h3>
+                        <p class="card-desc">Configured with Time-Of-Use pricing and peak demand charges</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tier Name</th>
+                                    <th>Hours</th>
+                                    <th>Rate ($/kWh)</th>
+                                    <th>Demand Charge ($/kW)</th>
+                                    <th>Operating Strategy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tariffTableBody">
+                                <!-- Injected via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Current Dispatch Recommendation -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Current Real-Time Dispatch Plan</h3>
+                        <p class="card-desc">Generated by SmartDispatchService</p>
+                    </div>
+                    <div class="dispatch-detail-box" id="dispatchPlanBox">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historical Dispatch Table -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Recent Dispatch Decisions & Savings Log</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>District Demand</th>
+                                <th>Chiller Output</th>
+                                <th>Ice Melt Shaved</th>
+                                <th>Grid Electrical kW</th>
+                                <th>Mode</th>
+                                <th>Hourly Cost</th>
+                                <th>Baseline Cost</th>
+                                <th>Hourly Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dispatchHistoryTableBody">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= TAB 6: IOT TELEMETRY & ALERTS ======================= -->
+        <section id="tab-telemetry" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>IoT Sensor Telemetry & Safety Alarms</h2>
+                    <p class="card-desc">Real-time industrial sensor streams, temperature verification, and protection alerts</p>
+                </div>
+            </div>
+
+            <!-- Active Alerts Banner -->
+            <div class="card" style="border-left: 4px solid var(--warning);">
+                <div class="card-header">
+                    <h3>Active System Alerts & Protection Alarms</h3>
+                    <p class="card-desc">Monitored by automated threshold rules</p>
+                </div>
+                <div class="alerts-list" id="alertsListContainer">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Telemetry Sensors Grid -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Live IoT Sensor Readings</h3>
+                    <p class="card-desc">Temperature probes, flow transmitters, pressure transducers, and power meters</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Sensor Code</th>
+                                <th>Type</th>
+                                <th>Reading</th>
+                                <th>Unit</th>
+                                <th>Physical Installation Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="telemetryTableBody">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= TAB 7: BILLING & CARBON OFFSETS ======================= -->
+        <section id="tab-billing" class="tab-pane">
+            <div class="section-header">
+                <div>
+                    <h2>Municipal Billing & Carbon Offset Analytics</h2>
+                    <p class="card-desc">Energy consumption accounting, avoided peak demand penalties, and sustainability reporting</p>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btnGenerateBill">
+                    + Generate Zone Bill
+                </button>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header"><span class="kpi-title">Total Carbon Reduction</span></div>
+                    <div class="kpi-value" id="billTotalCarbon">1,482 <span class="unit">Tons CO₂</span></div>
+                    <div class="kpi-sub">Shifted from peak gas peakers</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header"><span class="kpi-title">Peak Demand Avoided</span></div>
+                    <div class="kpi-value" id="billPeakAvoided">2.85 <span class="unit">MW</span></div>
+                    <div class="kpi-sub">Shaved grid peak power</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header"><span class="kpi-title">Monthly Demand Cost Avoided</span></div>
+                    <div class="kpi-value" id="billDemandSavings">$68,400 <span class="unit">/mo</span></div>
+                    <div class="kpi-sub">Demand charge penalty avoided</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Municipal Monthly Utility Bills</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bill ID</th>
+                                <th>Municipal Zone</th>
+                                <th>Period</th>
+                                <th>Ton-Hours Consumed</th>
+                                <th>Energy Charge ($)</th>
+                                <th>Peak Demand Charge ($)</th>
+                                <th>Total Bill ($)</th>
+                                <th>Peak Shaved (kW)</th>
+                                <th>CO2 Offset (kg)</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTableBody">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simple Toast Notification -->
+    <div id="toast" class="toast">Action completed successfully!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

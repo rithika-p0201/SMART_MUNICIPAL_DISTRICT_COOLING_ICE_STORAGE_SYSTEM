@@ -1,0 +1,30 @@
+{
+  "simulationName": "Municipal District 24-Hour Summer Peak Cooling Demand Profile",
+  "baseUnit": "Tons of Refrigeration (TR)",
+  "hourlyProfile": [
+    {"hour": 0, "districtDemandTR": 3100, "ambientTempC": 24.2, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 1, "districtDemandTR": 2900, "ambientTempC": 23.8, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 2, "districtDemandTR": 2800, "ambientTempC": 23.5, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 3, "districtDemandTR": 2750, "ambientTempC": 23.1, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 4, "districtDemandTR": 2700, "ambientTempC": 22.8, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 5, "districtDemandTR": 2850, "ambientTempC": 23.2, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 6, "districtDemandTR": 3200, "ambientTempC": 24.5, "suggestedMode": "OFF_PEAK_ICE_CHARGING"},
+    {"hour": 7, "districtDemandTR": 4100, "ambientTempC": 26.0, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 8, "districtDemandTR": 5200, "ambientTempC": 28.2, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 9, "districtDemandTR": 6100, "ambientTempC": 30.5, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 10, "districtDemandTR": 6800, "ambientTempC": 32.1, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 11, "districtDemandTR": 7100, "ambientTempC": 33.4, "suggestedMode": "HYBRID_COOLING"},
+    {"hour": 12, "districtDemandTR": 7500, "ambientTempC": 35.0, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 13, "districtDemandTR": 7800, "ambientTempC": 36.2, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 14, "districtDemandTR": 7950, "ambientTempC": 36.8, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 15, "districtDemandTR": 7850, "ambientTempC": 36.5, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 16, "districtDemandTR": 7400, "ambientTempC": 35.2, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 17, "districtDemandTR": 6900, "ambientTempC": 33.8, "suggestedMode": "PEAK_SHAVING_ICE_MELT"},
+    {"hour": 18, "districtDemandTR": 6200, "ambientTempC": 31.9, "suggestedMode": "HYBRID_COOLING"},
+    {"hour": 19, "districtDemandTR": 5500, "ambientTempC": 30.0, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 20, "districtDemandTR": 4800, "ambientTempC": 28.5, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 21, "districtDemandTR": 4200, "ambientTempC": 27.2, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 22, "districtDemandTR": 3700, "ambientTempC": 26.0, "suggestedMode": "CHILLER_BASE_LOAD"},
+    {"hour": 23, "districtDemandTR": 3300, "ambientTempC": 25.1, "suggestedMode": "OFF_PEAK_ICE_CHARGING"}
+  ]
+}
